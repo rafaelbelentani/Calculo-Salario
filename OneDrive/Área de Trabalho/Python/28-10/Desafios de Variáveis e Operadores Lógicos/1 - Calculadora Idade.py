@@ -25,6 +25,8 @@ else: #Cria uma condição - se o mes for maior que 12
 dataNascimento = datetime(year=ano, month=mes, day=dia) #Seta as variaveis - ano, dia e mes
 diferenca = dataAtual - dataNascimento #Realiza o calculo da data informada com a data atual
 diasFaltando = diferenca.days #Seta o calculo para apenas dias
+
+
 print("-"*90)   #Cria uma barra de inicialização do programa
 print("") #Pula uma linha
 
@@ -33,6 +35,6 @@ print("") #Pula uma linha
 print("-"*90)   #Cria uma barra de inicialização do programa
 print("") #Pula uma linha
 
-print("\t Obrigado por utilizar nosso programa... \n \t Volte Sempre".format(diasFaltando))
+print("\t Obrigado por utilizar nosso programa... \n \t Volte Sempre")
 print("") #Pula uma linha
 print("-"*90)   #Cria uma barra de inicialização do programa
