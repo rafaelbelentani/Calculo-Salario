@@ -11,7 +11,7 @@ while True: #Cria uma estrutura de Repetição
     print("Olá, seja Bem-Vindo ao Programa de Comparação de números") #Boas Vindas
     print(" ") #Pula uma linha
 
-    print("\t Insira um número de 1 a 7") #Pede que usuario ingorme um numero de 1 a 7
+    print("\t Insira um número de 1 a 7") #Pede que usuario informe um numero de 1 a 7
     numero = int(input(" ")) #Armazena o numero informado na variavel
 
 
