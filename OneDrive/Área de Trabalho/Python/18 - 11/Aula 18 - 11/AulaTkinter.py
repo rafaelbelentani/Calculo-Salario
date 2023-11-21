@@ -1,24 +1,24 @@
-from tkinter import messagebox, Tk, Label, Entry, PhotoImage, Button
-import emoji
+from tkinter import messagebox, Tk, Label, Entry, PhotoImage, Button #Importa a bibliote do TKINTER
+import emoji #Importa a Biblioteca de EMOJIS
 from datetime import * #Importa a Biblioteca de Data e Hora
-from qrcode import make
+from qrcode import make #Importa a Biblioteca de QRCODE
 
 
-def qrcode():
-    link = entrada.get()
+def qrcode(): #Cria a função QRCODE
+    link = entrada.get()  #Armazena o link que o usuario envia
     imagem = make(link) #Converte a imagem no qrcode
-    type(imagem)
+    type(imagem) #Define o tipo da imagem
     imagem.save(dataformatada) #Salva a imagem com data e hora atual    
-    messagebox.askokcancel("Aviso", message=emoji.emojize(" :OK_hand: Concluído"))
+    messagebox.askokcancel("Aviso", message=emoji.emojize(" :OK_hand: Concluído")) #Mensagem de Sucesso
 
 atual = datetime.now() #Cria a variavel da data e hora atual
 formato = "%d%m%Y%H%M.png" #Define o formato da data e da hora + .png no final
 dataformatada = atual.strftime(formato) #armazena a data formatada na variavel
 
 
-fundo = Tk()
+fundo = Tk() 
 fundo.title(emoji.emojize(":desktop_computer: TESTE"))
-background = PhotoImage(file="imagem.png")
+background = PhotoImage(file="18 - 11\Aula 18 - 11\imagem.png")
 janela = Label(fundo, image=background).pack()
 
 texto = Label(janela, text="Insira o Link para gerar seu QRCODE ") # Cria um rótulo (Label) na janela para exibir um texto
