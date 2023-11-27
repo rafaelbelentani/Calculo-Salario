@@ -1,7 +1,10 @@
 from tkinter import * #Importa a Biblioteca Tkinter
 from tkinter import ttk
+import pandas as pd
+
 
 janela = Tk() #Cria uma variavel para janela
+
 
 class Func():
     def limpa_tela(self):
