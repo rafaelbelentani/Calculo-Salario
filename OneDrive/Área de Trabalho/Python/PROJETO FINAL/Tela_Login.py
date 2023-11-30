@@ -1,7 +1,6 @@
 from tkinter import *
 import datetime
 
-
 data=datetime.datetime.now()
 formatoData = "%d/%m/%y"
 dataf = data.strftime(formatoData)
@@ -14,77 +13,58 @@ janela = Tk()
 
 class Func():
 
+
     def esconder_senha(self):
         self.esconder_senha = StringVar()
         
-    def entradasaldo(self):
-        self.entradaSaldo = float(self.entrada_saldo.get())
-        self.saldo.destroy()
-        self.limite = self.entradaSaldo* 0.5
-        self.pagina_principal=Toplevel()
-        self.pagina_principal.title('Página Principal') #Cria o nome na aba do programa
-        self.pagina_principal.geometry("500x900") #Define o tamanho da janela
-        self.pagina_principal.resizable(False, False) #Define se eu posso ou não aumentar ou diminuir a janela Horizontal e Vertical
-        self.bloco1 = Frame(self.pagina_principal, bg="red3")
-        self.bloco1.place(relx=0.00, rely=0.00, relwidth=1, relheight=0.2) #Define a posição da região retangular
-        self.senai = Label(self.pagina_principal, text="SENAI", bg="red3", fg="white", font= ('arial',50, 'bold')) #Cria o texto de CÓDIGO
-        self.senai.place(relx=0.3, rely=0.06) #Define a posição do texto
-        self.banco = Label(self.pagina_principal, text="Banco", bg="red3", fg="white", font= ('arial',16, 'bold')) #Cria o texto de CÓDIGO
-        self.banco.place(relx=0.45, rely=0.04) #Define a posição do texto
-        self.botaocadastrar = Button(self.pagina_principal, text="Fechar", bd=3, fg="black", font= ('sansserif',10,), command=self.pagina_principal.destroy) #Cria um botão (Texto do botão, background)
-        self.botaocadastrar.place(relx=0.4, rely=0.86, relwidth=0.2, relheight=0.05) #Define a posição do botão
-        self.blocoData = Frame(self.pagina_principal, bg="gray71", highlightbackground="black", highlightthickness=3 )
-        self.blocoData.place(relx=0.04, rely=0.25, relheight=0.13, relwidth=0.25, )
-        self.text = Label(self.pagina_principal, text="Data", bg="gray71", fg="black", font= ('arial',10, 'bold'))
-        self.text.place(relx=0.12, rely=0.257, relwidth=0.1, relheight=0.02)
-        self.data = Label(self.pagina_principal, text=dataf, bg="gray71", fg="white", font= ('arial',16, 'bold'))
-        self.data.place(relx=0.06, rely=0.285, relwidth=0.2, relheight=0.03)
-        self.hora = Label(self.pagina_principal, text=horaf, bg="gray71", fg="white", font= ('arial',16, 'bold'))
-        self.hora.place(relx=0.06, rely=0.325, relwidth=0.2, relheight=0.03)
-        self.blocoSaldo = Frame(self.pagina_principal, bg="gray71", highlightbackground="black", highlightthickness=3, )
-        self.blocoSaldo.place(relx=0.37, rely=0.25, relheight=0.13, relwidth=0.25, )
-        self.textSaldo = Label(self.pagina_principal, text="Saldo", bg="gray71", fg="black", font= ('arial',10, 'bold'))
-        self.textSaldo.place(relx=0.45, rely=0.257, relwidth=0.1, relheight=0.02)
-        self.textsaldoRs = Label(self.pagina_principal, text="R$", bg="gray71", fg="white", font= ('arial',16, 'bold'))
-        self.textsaldoRs.place(relx=0.38, rely=0.3, relwidth=0.05, relheight=0.03)
-        self.textvarsaldo = Label(self.pagina_principal, text=self.entradaSaldo, bg="gray71", fg="white", font= ('arial',16, 'bold'))
-        self.textvarsaldo.place(relx=0.43, rely=0.3, relwidth=0.18, relheight=0.03)
-        self.blocoLimite = Frame(self.pagina_principal, bg="gray71", highlightbackground="black", highlightthickness=3)
-        self.blocoLimite.place(relx=0.7, rely=0.25, relheight=0.13, relwidth=0.25, )
-        self.textLimite = Label(self.pagina_principal, text="Limite", bg="gray71", fg="black", font= ('arial',10, 'bold'))
-        self.textLimite.place(relx=0.78, rely=0.257, relwidth=0.1, relheight=0.02)
-        self.textlimiteRs = Label(self.pagina_principal, text="R$", bg="gray71", fg="white", font= ('arial',16, 'bold'))
-        self.textlimiteRs.place(relx=0.71, rely=0.3, relwidth=0.05, relheight=0.03)
-        self.textvarlimit = Label(self.pagina_principal, text=self.limite, bg="gray71", fg="white", font= ('arial',16, 'bold'))
-        self.textvarlimit.place(relx=0.76, rely=0.3, relwidth=0.18, relheight=0.03)
-
     def login(self):
+        
         self.usuariologin = self.entrada_usuariologin.get()
         self.senhalogin = self.entrada_senhalogin.get()
         self.usuario = "usuario"
         self.senha = "senha"
         
-
-
         if self.usuariologin==""  and self.senhalogin=="":
             self.mensagem = "Login Autorizado"
             self.msglogin.config(text=self.mensagem)
             self.entrada_usuariologin.delete(0, END)
             self.entrada_senhalogin.delete(0, END)
-            self.saldo=Toplevel()
-            self.saldo.title("Saldo")
-            self.saldo.geometry("400x250") #Define o tamanho da janela
-            self.saldo.resizable(False, False) #Define se eu posso ou não aumentar ou diminuir a janela Horizontal e Vertical
-            self.textsaldo = Label(self.saldo, text="Informe o valor do seu Saldo", font= ('arial',12, 'bold'))
-            self.textsaldo.place(relx=0.25, rely=0.2)
-            self.entrada_saldo = Entry(self.saldo)
-            self.entrada_saldo.place(relx=0.25, rely=0.4, relwidth=0.5, relheight=0.12)
-            self.botaook = Button(self.saldo, text="OK", bd=3, fg="black", font= ('sansserif',10,), command=self.entradasaldo)
-            self.botaook.place(relx=0.38, rely=0.6, relwidth=0.2, relheight=0.15) #Define a posição do botão
-
-            
-
-            
+            self.pagina_principal=Toplevel()
+            self.pagina_principal.title('Página Principal') #Cria o nome na aba do programa
+            self.pagina_principal.geometry("500x900") #Define o tamanho da janela
+            self.pagina_principal.resizable(False, False) #Define se eu posso ou não aumentar ou diminuir a janela Horizontal e Vertical
+            self.bloco1 = Frame(self.pagina_principal, bg="red3")
+            self.bloco1.place(relx=0.00, rely=0.00, relwidth=1, relheight=0.2) #Define a posição da região retangular
+            self.senai = Label(self.pagina_principal, text="SENAI", bg="red3", fg="white", font= ('arial',50, 'bold')) #Cria o texto de CÓDIGO
+            self.senai.place(relx=0.3, rely=0.06) #Define a posição do texto
+            self.banco = Label(self.pagina_principal, text="Banco", bg="red3", fg="white", font= ('arial',16, 'bold')) #Cria o texto de CÓDIGO
+            self.banco.place(relx=0.45, rely=0.04) #Define a posição do texto
+            self.botaocadastrar = Button(self.pagina_principal, text="Fechar", bd=3, fg="black", font= ('sansserif',10,), command=self.pagina_principal.destroy) #Cria um botão (Texto do botão, background)
+            self.botaocadastrar.place(relx=0.4, rely=0.86, relwidth=0.2, relheight=0.05) #Define a posição do botão
+            self.blocoData = Frame(self.pagina_principal, bg="gray71", highlightbackground="black", highlightthickness=3 )
+            self.blocoData.place(relx=0.04, rely=0.25, relheight=0.13, relwidth=0.25, )
+            self.text = Label(self.pagina_principal, text="Data", bg="gray71", fg="black", font= ('arial',10, 'bold'))
+            self.text.place(relx=0.12, rely=0.257, relwidth=0.1, relheight=0.02)
+            self.data = Label(self.pagina_principal, text=dataf, bg="gray71", fg="white", font= ('arial',16, 'bold'))
+            self.data.place(relx=0.06, rely=0.285, relwidth=0.2, relheight=0.03)
+            self.hora = Label(self.pagina_principal, text=horaf, bg="gray71", fg="white", font= ('arial',16, 'bold'))
+            self.hora.place(relx=0.06, rely=0.325, relwidth=0.2, relheight=0.03)
+            self.blocoSaldo = Frame(self.pagina_principal, bg="gray71", highlightbackground="black", highlightthickness=3, )
+            self.blocoSaldo.place(relx=0.37, rely=0.25, relheight=0.13, relwidth=0.25, )
+            self.textSaldo = Label(self.pagina_principal, text="Saldo", bg="gray71", fg="black", font= ('arial',10, 'bold'))
+            self.textSaldo.place(relx=0.45, rely=0.257, relwidth=0.1, relheight=0.02)
+            self.textsaldoRs = Label(self.pagina_principal, text="R$", bg="gray71", fg="white", font= ('arial',16, 'bold'))
+            self.textsaldoRs.place(relx=0.38, rely=0.3, relwidth=0.05, relheight=0.03)
+            self.textvarsaldo = Label(self.pagina_principal, text="2.000,00", bg="gray71", fg="white", font= ('arial',16, 'bold'))
+            self.textvarsaldo.place(relx=0.43, rely=0.3, relwidth=0.18, relheight=0.03)
+            self.blocoLimite = Frame(self.pagina_principal, bg="gray71", highlightbackground="black", highlightthickness=3)
+            self.blocoLimite.place(relx=0.7, rely=0.25, relheight=0.13, relwidth=0.25, )
+            self.textLimite = Label(self.pagina_principal, text="Limite", bg="gray71", fg="black", font= ('arial',10, 'bold'))
+            self.textLimite.place(relx=0.78, rely=0.257, relwidth=0.1, relheight=0.02)
+            self.textlimiteRs = Label(self.pagina_principal, text="R$", bg="gray71", fg="white", font= ('arial',16, 'bold'))
+            self.textlimiteRs.place(relx=0.71, rely=0.3, relwidth=0.05, relheight=0.03)
+            self.textvarlimit = Label(self.pagina_principal, text="2.000,00", bg="gray71", fg="white", font= ('arial',16, 'bold'))
+            self.textvarlimit.place(relx=0.76, rely=0.3, relwidth=0.18, relheight=0.03)
 
         else:
             self.mensagem = "ERRO! Usuário/Senha Inválido"
