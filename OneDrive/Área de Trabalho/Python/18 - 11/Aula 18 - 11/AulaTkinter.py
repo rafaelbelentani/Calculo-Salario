@@ -3,7 +3,6 @@ import emoji #Importa a Biblioteca de EMOJIS
 from datetime import * #Importa a Biblioteca de Data e Hora
 from qrcode import make #Importa a Biblioteca de QRCODE
 
-
 def qrcode(): #Cria a função QRCODE
     link = entrada.get()  #Armazena o link que o usuario envia
     imagem = make(link) #Converte a imagem no qrcode
