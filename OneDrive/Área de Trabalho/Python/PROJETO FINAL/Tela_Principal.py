@@ -8,11 +8,11 @@ import sqlite3
 
 
 data=datetime.datetime.now()
-formatoData = "%d/%m/%y"
+formatoData = "%d/%m/%y "
 dataf = data.strftime(formatoData)
 formatodia="%d"
 dia = data.strftime(formatodia)
-formatoHora = "%H:%M:%S"
+formatoHora = " %H:%M:%S"
 horaf = data.strftime(formatoHora)
 data_hora = dataf + horaf
 
@@ -90,6 +90,13 @@ class Func():
         # Fechar a conexão com o banco de dados
         self.desconecta_bd()
 
+    def atualziarsaldo(self):
+        self.conn = sqlite3.connect('banco.bd')
+        self.cursor = self.conn.cursor()
+        self.cursor.execute('SELECT * FROM banco WHERE usuario=? AND senha=?', (self.usuariologin, self.senhalogin))
+        self.usuarioBanco = self.cursor.fetchone()
+        self.desconecta_bd()
+
     def login(self):
         self.usuariologin = self.entrada_usuariologin.get()
         self.senhalogin = self.entrada_senhalogin.get()
@@ -119,30 +126,9 @@ class Func():
             self.limpa_tela_login()
             messagebox.showerror('Erro', 'Usuário/Senha Inválidas.')
 
-    def ver_extrato(self):
-        self.extrato=Toplevel()
-        self.extrato.title("Extrato")
-        self.extrato.geometry("400x250") #Define o tamanho da janela
-        self.extrato.resizable(False, False) #Define se eu posso ou não aumentar ou diminuir a janela Horizontal e Vertical
-        
-        self.conecta_bd()
-        self.cursor.execute("SELECT data_hora, descricao, compra FROM banco")
-        self.extrato_data = self.cursor.fetchall()
-        
-        self.datahora = Label(self.extrato, text="Data/Hora", font= ('arial',10, 'bold'))
-        self.datahora.place(relx=0.1, rely=0.06) #Define a posição do texto
-        self.descricao = Label(self.extrato, text="Descrição", font= ('arial',10, 'bold'))
-        self.descricao.place(relx=0.45, rely=0.06) #Define a posição do texto10
-        self.valor = Label(self.extrato, text="Valor", font= ('arial',10, 'bold'))
-        self.valor.place(relx=0.8, rely=0.06) #Define a posição do texto
-
-        for i, (data_hora, descricao, compra) in enumerate(self.extrato_data, start=2):
-            Label(self.extrato, text=data_hora).grid(relx=0.1, rely=0.08)
-            Label(self.extrato, text=descricao).grid(relx=0.45, rely=0.08)
-            Label(self.extrato, text=compra).grid(relx=0.8, rely=0.08)
-        
     def paginaPrincipal(self):
-        saldo = self.usuarioBanco[10]
+        self.atualziarsaldo()
+        saldo = self.usuarioBanco[9]
         self.limpa_tela_login()
         self.limite = saldo * 0.5
         self.pagina_principal=Toplevel()
@@ -156,9 +142,7 @@ class Func():
         self.banco = Label(self.pagina_principal, text="Banco", bg="red3", fg="white", font= ('arial',16, 'bold')) #Cria o texto de CÓDIGO
         self.banco.place(relx=0.45, rely=0.04) #Define a posição do texto
         self.botaocadastrar = Button(self.pagina_principal, text="Sair", bd=3, fg="black", font= ('sansserif',10,), command=self.pagina_principal.destroy) #Cria um botão (Texto do botão, background)
-        self.botaocadastrar.place(relx=0.52, rely=0.86, relwidth=0.2, relheight=0.05) #Define a posição do botão
-        self.botaocomprar = Button(self.pagina_principal, text="Extrato", bd=3, fg="black", font= ('sansserif',10,), command=self.ver_extrato) #Cria um botão (Texto do botão, background)
-        self.botaocomprar.place(relx=0.28, rely=0.86, relwidth=0.2, relheight=0.05) #Define a posição do botão
+        self.botaocadastrar.place(relx=0.4, rely=0.9, relwidth=0.2, relheight=0.05) #Define a posição do botão
         self.blocoData = Frame(self.pagina_principal, bg="gray71", highlightbackground="black", highlightthickness=3 )
         self.blocoData.place(relx=0.04, rely=0.25, relheight=0.13, relwidth=0.25, )
         self.text = Label(self.pagina_principal, text="Data", bg="gray71", fg="black", font= ('arial',10, 'bold'))
@@ -173,48 +157,91 @@ class Func():
         self.textSaldo.place(relx=0.45, rely=0.257, relwidth=0.1, relheight=0.02)
         self.textsaldoRs = Label(self.pagina_principal, text="R$", bg="gray71", fg="white", font= ('arial',16, 'bold'))
         self.textsaldoRs.place(relx=0.38, rely=0.3, relwidth=0.05, relheight=0.03)
-        self.textvarsaldo = Label(self.pagina_principal, text=self.usuarioBanco[9], bg="gray71", fg="white", font= ('arial',16, 'bold'))
+        self.textvarsaldo = Label(self.pagina_principal, text=self.usuarioBanco[10], bg="gray71", fg="white", font= ('arial',16, 'bold'))
         self.textvarsaldo.place(relx=0.43, rely=0.3, relwidth=0.18, relheight=0.03)
         self.blocoLimite = Frame(self.pagina_principal, bg="gray71", highlightbackground="black", highlightthickness=3)
         self.blocoLimite.place(relx=0.7, rely=0.25, relheight=0.13, relwidth=0.25, )
-        self.textLimite = Label(self.pagina_principal, text="Limite", bg="gray71", fg="black", font= ('arial',10, 'bold'))
+        self.textLimite = Label(self.pagina_principal, text="Limite", bg="gray71", fg="red", font= ('arial',10, 'bold'))
         self.textLimite.place(relx=0.78, rely=0.257, relwidth=0.1, relheight=0.02)
-        self.textlimiteRs = Label(self.pagina_principal, text="R$", bg="gray71", fg="white", font= ('arial',16, 'bold'))
+        self.textlimiteRs = Label(self.pagina_principal, text="R$", bg="gray71", fg="red", font= ('arial',16, 'bold'))
         self.textlimiteRs.place(relx=0.71, rely=0.3, relwidth=0.05, relheight=0.03)
-        self.textvarlimit = Label(self.pagina_principal, text=self.limite, bg="gray71", fg="white", font= ('arial',16, 'bold'))
+        self.textvarlimit = Label(self.pagina_principal, text=self.limite, bg="gray71", fg="red", font= ('arial',16, 'bold'))
         self.textvarlimit.place(relx=0.76, rely=0.3, relwidth=0.18, relheight=0.03)
         self.txtvalor_compra = Label(self.pagina_principal, text="Valor", font= ('arial',12, 'bold')) #Cria o texto de CÓDIGO
         self.txtvalor_compra.place(relx=0.08, rely=0.45, relwidth=0.18, relheight=0.03) #Define a posição do texto
-        self.valor_compra = Entry(self.pagina_principal, show="*") #Cria o input de código
+        self.valor_compra = Entry(self.pagina_principal) #Cria o input de código
         self.valor_compra.place(relx= 0.3, rely=0.45, relheight=0.03, relwidth=0.4) #Define a posição do input
         self.txtdescricao_compra = Label(self.pagina_principal, text="Descrição", font= ('arial',12, 'bold')) #Cria o texto de CÓDIGO
         self.txtdescricao_compra.place(relx=0.08, rely=0.5, relwidth=0.18, relheight=0.03) #Define a posição do texto
-        self.descricao_compra = Entry(self.pagina_principal, show="*") #Cria o input de código
+        self.descricao_compra = Entry(self.pagina_principal) #Cria o input de código
         self.descricao_compra.place(relx= 0.3, rely=0.5, relheight=0.03, relwidth=0.4) #Define a posição do input
+        self.botaocomprar = Button(self.pagina_principal, text="Comprar", bd=3, fg="black", font= ('sansserif',10,), command=self.registrar_compra) #Cria um botão (Texto do botão, background)
+        self.botaocomprar.place(relx=0.75, rely=0.46, relwidth=0.2, relheight=0.05) #Define a posição do botão
+        self.bloco1 = Frame(self.pagina_principal, highlightbackground="black", highlightthickness=3)
+        self.bloco1.place(relx=0.05, rely=0.58, relwidth=0.9, relheight=0.3) #Define a posição da região retangular
+        self.conecta_bd()
+        self.cursor.execute("SELECT data_hora, descricao, compra FROM banco")
+        self.extrato_data = self.cursor.fetchall()
+        
+        self.datahora = Label(self.bloco1, text="Data/Hora", font= ('arial',10, 'bold'))
+        self.datahora.place(relx=0.1, rely=0.06) #Define a posição do texto
+        self.descricao = Label(self.bloco1, text="Descrição", font= ('arial',10, 'bold'))
+        self.descricao.place(relx=0.45, rely=0.06) #Define a posição do texto10
+        self.valor = Label(self.bloco1, text="Valor", font= ('arial',10, 'bold'))
+        self.valor.place(relx=0.75, rely=0.06) #Define a posição do texto
+
+        for i, (data_hora, descricao, compra) in enumerate(self.extrato_data, start=2):
+            self.databanco = Label(self.bloco1, text=data_hora)
+            self.databanco.place(relx=0.1, rely=0.2, relheight=0.1, relwidth=0.22)
+            
+            self.descricaobanco = Label(self.bloco1, text=descricao)
+            self.descricaobanco.place(relx=0.45, rely=0.2, relheight=0.1, relwidth=0.1)
+
+            self.comprabanco = Label(self.bloco1, text=compra)
+            self.comprabanco.place(relx=0.75, rely=0.2, relheight=0.1, relwidth=0.1 )
 
 
     def registrar_compra(self):
 
         valor_compra = self.valor_compra.get()
+        valor_compra = float(valor_compra)
         descricao = self.descricao_compra.get()
-
-        if not valor_compra or not descricao:
-            messagebox.showwarning("Campos Vazios", "Preencha todos os campos.")
-            return
-
-        try:
-            valor_compra = float(valor_compra)
-        except ValueError:
-            messagebox.showwarning("Valor Inválido", "Insira um valor numérico válido.")
-            return
+        saldo = self.usuarioBanco[10]
+        saldoBox = saldo - valor_compra
         
+
+        if valor_compra > saldo:
+             messagebox.showwarning("ERROR!", "Saldo Insuficiente.")
+
+        else:
+            if not valor_compra or not descricao:
+                messagebox.showwarning("Campos Vazios", "Preencha todos os campos.")
+                return
+
+            try:
+                valor_compra = float(valor_compra)
+            except ValueError:
+                messagebox.showwarning("Valor Inválido", "Insira um valor numérico válido.")
+                return
+            self.pagina_principal.destroy()
+            self.conn = sqlite3.connect('banco.bd')
+            self.cursor = self.conn.cursor()
+            self.cursor.execute('UPDATE banco SET saldo=? WHERE cod=?', (saldoBox, self.usuarioBanco[0]))
+            self.conn.commit(); print("SALDO DESCONTADO")
+            self.desconecta_bd()
         
-        self.cursor = self.conn.cursor()
-        self.cursor.execute("INSERT INTO banco (data_hora, descricao, valor) VALUES (?, ?, ?)",
-                       (data_hora ,descricao, valor_compra))
-        self.conn.commit()
-
-
+            self.conn = sqlite3.connect('banco.bd')
+            self.cursor = self.conn.cursor()
+            self.cursor.execute('UPDATE banco SET data_hora=?, descricao=?, compra=? WHERE cod=?', (data_hora, descricao, valor_compra ,self.usuarioBanco[0]))
+            #self.cursor.execute('INSERT INTO banco (data_hora, descricao, compra) VALUES (?, ?, ?)', (data_hora, descricao, valor_compra))
+            self.conn.commit(); print("COMPRA INSERIDA")
+            self.desconecta_bd()
+            messagebox.showinfo('Compra', 'Compra realizada com sucesso!')
+            self.atualziarsaldo()
+            self.paginaPrincipal()
+            self.valor_compra.delete(0, END)
+            self.descricao_compra.delete(0, END)
+            
 
 class Application(Func):
 
