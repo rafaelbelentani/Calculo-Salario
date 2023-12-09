@@ -12,8 +12,9 @@ formatoData = "%d/%m/%y"
 dataf = data.strftime(formatoData)
 formatodia="%d"
 dia = data.strftime(formatodia)
-formatoHora = "%H:%M"
+formatoHora = "%H:%M:%S"
 horaf = data.strftime(formatoHora)
+data_hora = dataf + horaf
 
 
 janela = Tk()
@@ -40,6 +41,10 @@ class Func():
                 telefone CHAR(40) NOT NULL,
                 email CHAR(50) UNIQUE NOT NULL,
                 senha CHAR(10) NOT NULL,
+                data_hora TEXT,
+                descricao TEXT,
+                compra REAL DEFAULT 0.0,
+                saldo_inicial REAL DEFAULT 0.0,
                 saldo REAL DEFAULT 0.0
             );
         """)
@@ -93,10 +98,10 @@ class Func():
         self.cursor.execute('SELECT * FROM banco WHERE usuario=? AND senha=?', (self.usuariologin, self.senhalogin))
         self.usuarioBanco = self.cursor.fetchone()
         self.desconecta_bd()
-        
+
 
         if self.usuarioBanco:
-            if self.usuarioBanco[6] != 0.0:
+            if self.usuarioBanco[9] != 0.0:
                 self.paginaPrincipal()
 
             else:
@@ -105,7 +110,7 @@ class Func():
                 self.saldoentry= float(simpledialog.askstring('Saldo', 'Informe o saldo da sua conta:'))
                 self.conn = sqlite3.connect('banco.bd')
                 self.cursor = self.conn.cursor()
-                self.cursor.execute('UPDATE banco SET saldo=? WHERE cod=?', (self.saldoentry, self.usuarioBanco[0]))
+                self.cursor.execute('UPDATE banco SET saldo_inicial=?, saldo=? WHERE cod=?', (self.saldoentry, self.saldoentry, self.usuarioBanco[0]))
                 self.conn.commit(); print("SALDO CADASTRADO LOGIN")
                 self.paginaPrincipal()
                 
@@ -114,25 +119,35 @@ class Func():
             self.limpa_tela_login()
             messagebox.showerror('Erro', 'Usuário/Senha Inválidas.')
 
-    def compra(self):
-        self.saldo=Toplevel()
-        self.saldo.title("Compra")
-        self.saldo.geometry("400x250") #Define o tamanho da janela
-        self.saldo.resizable(False, False) #Define se eu posso ou não aumentar ou diminuir a janela Horizontal e Vertical
-        self.textsaldo = Label(self.saldo, text="Informe o valor gasto no dia {}".format(dia), font= ('arial',12, 'bold'))
-        self.textsaldo.place(relx=0.25, rely=0.2)
-        self.botaook = Button(self.saldo, text="OK", bd=3, fg="black", font= ('sansserif',10,), command=self.extrato)
-        self.botaook.place(relx=0.38, rely=0.6, relwidth=0.2, relheight=0.15) #Define a posição do botão
-        self.entrada_compra = Entry(self.saldo)
-        self.entrada_compra.place(relx=0.25, rely=0.4, relwidth=0.5, relheight=0.12)
+    def ver_extrato(self):
+        self.extrato=Toplevel()
+        self.extrato.title("Extrato")
+        self.extrato.geometry("400x250") #Define o tamanho da janela
+        self.extrato.resizable(False, False) #Define se eu posso ou não aumentar ou diminuir a janela Horizontal e Vertical
+        
+        self.conecta_bd()
+        self.cursor.execute("SELECT data_hora, descricao, compra FROM banco")
+        self.extrato_data = self.cursor.fetchall()
+        
+        self.datahora = Label(self.extrato, text="Data/Hora", font= ('arial',10, 'bold'))
+        self.datahora.place(relx=0.1, rely=0.06) #Define a posição do texto
+        self.descricao = Label(self.extrato, text="Descrição", font= ('arial',10, 'bold'))
+        self.descricao.place(relx=0.45, rely=0.06) #Define a posição do texto10
+        self.valor = Label(self.extrato, text="Valor", font= ('arial',10, 'bold'))
+        self.valor.place(relx=0.8, rely=0.06) #Define a posição do texto
+
+        for i, (data_hora, descricao, compra) in enumerate(self.extrato_data, start=2):
+            Label(self.extrato, text=data_hora).grid(relx=0.1, rely=0.08)
+            Label(self.extrato, text=descricao).grid(relx=0.45, rely=0.08)
+            Label(self.extrato, text=compra).grid(relx=0.8, rely=0.08)
         
     def paginaPrincipal(self):
-        saldo = self.usuarioBanco[6]
+        saldo = self.usuarioBanco[10]
         self.limpa_tela_login()
         self.limite = saldo * 0.5
         self.pagina_principal=Toplevel()
         self.pagina_principal.title('Página Principal') #Cria o nome na aba do programa
-        self.pagina_principal.geometry("500x900") #Define o tamanho da janela
+        self.pagina_principal.geometry("500x650") #Define o tamanho da janela
         self.pagina_principal.resizable(False, False) #Define se eu posso ou não aumentar ou diminuir a janela Horizontal e Vertical
         self.bloco1 = Frame(self.pagina_principal, bg="red3")
         self.bloco1.place(relx=0.00, rely=0.00, relwidth=1, relheight=0.2) #Define a posição da região retangular
@@ -142,7 +157,7 @@ class Func():
         self.banco.place(relx=0.45, rely=0.04) #Define a posição do texto
         self.botaocadastrar = Button(self.pagina_principal, text="Sair", bd=3, fg="black", font= ('sansserif',10,), command=self.pagina_principal.destroy) #Cria um botão (Texto do botão, background)
         self.botaocadastrar.place(relx=0.52, rely=0.86, relwidth=0.2, relheight=0.05) #Define a posição do botão
-        self.botaocomprar = Button(self.pagina_principal, text="Comprar", bd=3, fg="black", font= ('sansserif',10,), command=self.compra) #Cria um botão (Texto do botão, background)
+        self.botaocomprar = Button(self.pagina_principal, text="Extrato", bd=3, fg="black", font= ('sansserif',10,), command=self.ver_extrato) #Cria um botão (Texto do botão, background)
         self.botaocomprar.place(relx=0.28, rely=0.86, relwidth=0.2, relheight=0.05) #Define a posição do botão
         self.blocoData = Frame(self.pagina_principal, bg="gray71", highlightbackground="black", highlightthickness=3 )
         self.blocoData.place(relx=0.04, rely=0.25, relheight=0.13, relwidth=0.25, )
@@ -158,7 +173,7 @@ class Func():
         self.textSaldo.place(relx=0.45, rely=0.257, relwidth=0.1, relheight=0.02)
         self.textsaldoRs = Label(self.pagina_principal, text="R$", bg="gray71", fg="white", font= ('arial',16, 'bold'))
         self.textsaldoRs.place(relx=0.38, rely=0.3, relwidth=0.05, relheight=0.03)
-        self.textvarsaldo = Label(self.pagina_principal, text=self.usuarioBanco[6], bg="gray71", fg="white", font= ('arial',16, 'bold'))
+        self.textvarsaldo = Label(self.pagina_principal, text=self.usuarioBanco[9], bg="gray71", fg="white", font= ('arial',16, 'bold'))
         self.textvarsaldo.place(relx=0.43, rely=0.3, relwidth=0.18, relheight=0.03)
         self.blocoLimite = Frame(self.pagina_principal, bg="gray71", highlightbackground="black", highlightthickness=3)
         self.blocoLimite.place(relx=0.7, rely=0.25, relheight=0.13, relwidth=0.25, )
@@ -168,14 +183,39 @@ class Func():
         self.textlimiteRs.place(relx=0.71, rely=0.3, relwidth=0.05, relheight=0.03)
         self.textvarlimit = Label(self.pagina_principal, text=self.limite, bg="gray71", fg="white", font= ('arial',16, 'bold'))
         self.textvarlimit.place(relx=0.76, rely=0.3, relwidth=0.18, relheight=0.03)
-        self.blocoextrato = Frame(self.pagina_principal, bg="white", highlightthickness=3, highlightbackground="black")
-        self.blocoextrato.place(relx=0.05, rely=0.43, relwidth=0.9, relheight=0.38) #Define a posição da região retangular
-        self.textextrato = Label(self.pagina_principal, text="Extrato", font= ('arial', '10', 'bold'), bg="white")
-        self.textextrato.place(relx=0.07, rely=0.44)
-        self.scroolLista = Scrollbar(self.pagina_principal ,orient="vertical") #Cria a rolagem da lista
-        self.scroolLista.place(relx= 0.91, rely=0.435, relheight=0.37, relwidth=0.03) #Define a posição da Rolagem
+        self.txtvalor_compra = Label(self.pagina_principal, text="Valor", font= ('arial',12, 'bold')) #Cria o texto de CÓDIGO
+        self.txtvalor_compra.place(relx=0.08, rely=0.45, relwidth=0.18, relheight=0.03) #Define a posição do texto
+        self.valor_compra = Entry(self.pagina_principal, show="*") #Cria o input de código
+        self.valor_compra.place(relx= 0.3, rely=0.45, relheight=0.03, relwidth=0.4) #Define a posição do input
+        self.txtdescricao_compra = Label(self.pagina_principal, text="Descrição", font= ('arial',12, 'bold')) #Cria o texto de CÓDIGO
+        self.txtdescricao_compra.place(relx=0.08, rely=0.5, relwidth=0.18, relheight=0.03) #Define a posição do texto
+        self.descricao_compra = Entry(self.pagina_principal, show="*") #Cria o input de código
+        self.descricao_compra.place(relx= 0.3, rely=0.5, relheight=0.03, relwidth=0.4) #Define a posição do input
 
+
+    def registrar_compra(self):
+
+        valor_compra = self.valor_compra.get()
+        descricao = self.descricao_compra.get()
+
+        if not valor_compra or not descricao:
+            messagebox.showwarning("Campos Vazios", "Preencha todos os campos.")
+            return
+
+        try:
+            valor_compra = float(valor_compra)
+        except ValueError:
+            messagebox.showwarning("Valor Inválido", "Insira um valor numérico válido.")
+            return
         
+        
+        self.cursor = self.conn.cursor()
+        self.cursor.execute("INSERT INTO banco (data_hora, descricao, valor) VALUES (?, ?, ?)",
+                       (data_hora ,descricao, valor_compra))
+        self.conn.commit()
+
+
+
 class Application(Func):
 
     def __init__(self):
@@ -191,7 +231,7 @@ class Application(Func):
     def janela(self):
         self.janela = janela
         self.janela.title('Pagina Login') #Cria o nome na aba do programa
-        self.janela.geometry("500x900") #Define o tamanho da janela
+        self.janela.geometry("500x650") #Define o tamanho da janela
         self.janela.resizable(False, False) #Define se eu posso ou não aumentar ou diminuir a janela Horizontal e Vertical
 
     def blocos(self):
